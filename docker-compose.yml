@@ -1,0 +1,35 @@
+# Version 3 is currently the latest version of docker compose
+version: "3"
+
+services:
+  docker-networking-compose-server:
+    build: server/
+
+    command: bash run-flaskapp.sh
+
+    # connect to our own internal network
+    networks:
+      - docker-networking-compose-net
+
+  docker-networking-compose-client:
+    build: client/
+
+    # tell the client what host to connect to on the internal
+    # network between the docker containers
+    environment:
+      - SERVER=docker-networking-compose-server
+
+    command: bash run-client.sh
+
+    # connect to our own internal network
+    networks:
+      - docker-networking-compose-net
+
+    # wait for the server to be ready before starting this container
+    depends_on:
+      - docker-networking-compose-server
+
+# create a new bridge network for all containers to join
+networks:
+  docker-networking-compose-net:
+    driver: bridge
