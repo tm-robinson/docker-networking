@@ -3,19 +3,16 @@ version: "3"
 
 services:
   docker-networking-compose-server:
-    image: public.ecr.aws/z1h1v5y6/docker-networking-server:latest
+    build: server/
 
     command: bash run-flaskapp.sh
-
-    #ports:
-    #  - "5000:5000"
 
     # connect to our own internal network
     networks:
       - docker-networking-compose-net
 
   docker-networking-compose-client:
-    image: public.ecr.aws/z1h1v5y6/docker-networking-client:latest
+    build: client/
 
     # tell the client what host to connect to on the internal
     # network between the docker containers
@@ -31,7 +28,6 @@ services:
     # connect to our own internal network
     networks:
       - docker-networking-compose-net
-#      - bridge
 
     # wait for the server to be ready before starting this container
     depends_on:
